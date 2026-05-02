@@ -86,7 +86,15 @@ export function CarCard({ car }) {
             <img
               src={car.image}
               alt={car.name}
-              className="max-h-full max-w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
+              className="max-h-full max-w-full object-contain"
+              // Game-y normalisation filter applied to every car photo.
+              // Punches contrast and saturation so a deck of mixed-source
+              // press shots reads as cohesive, then drops a soft shadow
+              // for the floating-on-card effect.
+              style={{
+                filter:
+                  "contrast(1.1) saturate(1.3) drop-shadow(0 8px 14px rgba(0,0,0,0.5))",
+              }}
               onError={() => setImageOk(false)}
             />
           ) : (

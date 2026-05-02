@@ -1,89 +1,58 @@
-# Phase 2 — One car, beautifully
+# Phase 2 — One car, beautifully (v1 shipped)
 
-Drop-in files for the Phase 1 React + Vite + Tailwind project.
+What landed in this phase, and what's deliberately deferred.
 
-## What's in here
+## What's in v1
 
 ```
 src/
-├── App.jsx                    # replace your Phase 1 App.jsx
+├── App.jsx                    # responsive page wrapper
 ├── data/
-│   ├── statConfig.js          # the 6 hexagon axes + normalisation helpers
-│   └── cars.js                # one Renault 5, ready to grow in Phase 3
+│   ├── statConfig.js          # the 6 hexagon axes + normalisation
+│   └── cars.js                # one Renault 5, with trim envelopes
 └── components/
-    ├── CarCard.jsx            # the framed Top Trumps card
+    ├── CarCard.jsx            # the framed card composition
     ├── StatHexagon.jsx        # the SVG radar
-    └── StatRow.jsx            # one row in the stat readout
+    └── StatRow.jsx            # one row in the spec readout
+
+public/
+└── cars/
+    └── renault-5.svg          # placeholder silhouette
 ```
 
-## Install
+## Key decisions captured here so future-you doesn't relitigate them
 
-From the root of your Phase 1 project:
+**Six axes, not five or seven.** Range, charge speed, price, 0–100, boot, efficiency. Covers six distinct buyer personas with no redundancy. Calibrating min/max bounds lives in `statConfig.js` and is a Phase 6 chore.
 
-```bash
-# Copy the files in (mirroring the directory layout above)
-cp -r phase-2/src/* ./src/
+**Hexagon plots one trim, readout shows the envelope.** Each stat is `{ hex, min, max }`. The radar uses `hex` (the headline trim — for the R5, "E-Tech Comfort Range 150"). Each row in the readout shows the headline value with the full lineup envelope in muted parens, so a 100 kW charge speed reads honestly as "100 kW (80–100)" — i.e., entry trims charge slower. Stats that don't vary across trims (boot, efficiency) omit min/max and just show the single number.
 
-# No new dependencies — everything is React + Tailwind defaults.
-npm run dev
-```
+**Direction handling.** Stats marked `direction: "low"` (price, 0–100, efficiency) get inverted at normalisation time so the hexagon convention "bigger shape = better car" holds for every axis. Critical for Phase 5 when two hexagons overlap.
 
-You should see the Renault 5 card centred on a dark background. The frame
-is yellow because that's the Renault 5 launch colour ("Pop Yellow"). To
-change the accent: edit `accentColor` in `data/cars.js`.
+**Card sizing.** `w-full max-w-[420px]` on the card + `px-3 py-6 sm:p-6` on the page wrapper. Fills the screen on phones, caps on tablet/desktop.
 
-## Adding the photo
+**Image strategy.** Currently shipping with a stylised SVG silhouette as a placeholder. The `<img>` element has a CSS filter (`contrast(1.1) saturate(1.3)` + drop-shadow) so any raw photo dropped in later automatically gets normalised to a more game-like, visually cohesive style. Sourcing strategy when ready: ev-database.org for standardised side-profile shots; manufacturer press kits for hero cars.
 
-The card has a graceful fallback when the image isn't found — you'll see
-"Drop a transparent PNG at /cars/renault-5.png" inside the photo area.
-When you have one:
+## What's intentionally NOT in v1
 
-1. Create `public/cars/` in your project
-2. Drop `renault-5.png` in there (transparent background, around 800×500)
-3. Refresh
+| Feature | Phase |
+|---|---|
+| Multiple cars / swipe deck | 3 |
+| Tap to expand detail view | 4 |
+| Two-card overlap (VS mode) | 5 |
+| Real photos for all 15 cars | 6 |
+| Calibrated min/max bounds | 6 |
 
-For sourcing transparent-background photos: manufacturer press kits are
-the highest quality; failing that, removing the background from a press
-photo with `remove.bg` works well. Save Phase 6 polish (real photos for
-all 15 cars) for last — placeholder is fine while you iterate the design.
+Resist temptation to start on these now. The Phase 2 atomic unit is one polished card — multiplying it is Phase 3, and you want the unit right before multiplying.
 
-## How the hexagon math works
+## Adding a real photo for the R5
 
-Each of the six axes sits at angle `θ = (2π · i / 6) − π/2`, so axis 0 is
-at the top ("12 o'clock") and they go clockwise. For each stat, the
-vertex sits at distance `R · v` from the centre, where:
+When you have a transparent-background PNG:
 
-- `R` is the outer radius
-- `v` is the stat's normalised 0..1 value (see `normaliseStat` in
-  `statConfig.js`)
+1. Drop it at `public/cars/renault-5.png`
+2. Change one line in `src/data/cars.js`: `image: "/cars/renault-5.png"`
 
-Stats with `direction: "low"` (price, 0–100, efficiency) are inverted at
-normalisation time, so the hexagon always reads "bigger shape = better
-car". This is the convention you'll lean on heavily in Phase 5 when you
-overlap two hexagons.
+The CSS filter on the `<img>` element handles stylisation automatically. Aim for ~800×500, car centred, side profile.
 
-## Tweaking the design
+## Onboarding the next car (Phase 3 prep)
 
-- **Card width**: `w-[340px]` in `CarCard.jsx`
-- **Accent colour**: `accentColor` per car in `cars.js`
-- **Hexagon size**: `SIZE` constant at the top of `StatHexagon.jsx`
-- **Grid level rings**: `gridLevels` array (currently 25/50/75/100%)
-- **Type badge / origin flag**: the card header in `CarCard.jsx`
-
-## What's intentionally NOT here yet
-
-- Multiple cards / swipe deck → Phase 3
-- Tap-to-expand detail view → Phase 4
-- Two-card overlap (VS mode) → Phase 5
-
-Resist adding any of these now. The Phase 2 brief is one card, polished —
-because the card is the atomic unit and you want it right before
-multiplying it.
-
-## Phase 6 calibration note
-
-The `min` / `max` bounds in `statConfig.js` are reasonable defaults for
-mainstream EVs sold in France. Once you have the full 10-15 car dataset,
-revisit them — the goal is that no car ever has all-zero or all-max
-hexagons, and that the shape genuinely tells you what kind of car it is
-at a glance.
+Add a new entry to the `CARS` array in `cars.js`. Required fields: `id`, `name`, `variant` (the headline trim), `type`, `origin`, `image`, `accentColor`, and `stats` with `{ hex, min, max }` per axis. Pick the hero trim deliberately — it's what the radar will plot.
