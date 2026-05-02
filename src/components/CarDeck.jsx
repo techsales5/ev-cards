@@ -41,19 +41,19 @@ function depthStyle(depth) {
   };
 }
 
-// Swipe affordance pinned to the viewport (fixed, not absolute) so it's
-// reliably visible on phones where the card already fills most of the
-// vertical space. Renders only until the user has swiped once — the hint
-// exists to bootstrap discovery and would just be chrome after that.
+// Swipe affordance pinned to the top of the viewport, where there's empty
+// breathing space above the centred card. Renders only until the user has
+// swiped once — the hint exists to bootstrap discovery and would just be
+// chrome after that.
 function SwipeHint() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 4 }}
+      initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, transition: { duration: 0.25 } }}
       className="fixed left-0 right-0 text-center pointer-events-none z-50"
-      // Sit above the iOS home-indicator / browser chrome where present.
-      style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}
+      // Sit below the iOS notch / status bar where present.
+      style={{ top: "calc(env(safe-area-inset-top, 0px) + 16px)" }}
     >
       <motion.span
         className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white/55"
