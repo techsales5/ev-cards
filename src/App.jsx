@@ -1,11 +1,13 @@
 // App.jsx
 // ---------------------------------------------------------------------------
-// Phase 2 entry point — render one card, beautifully.
-// In Phase 3 this becomes a stack of cards with swipe gestures.
+// Phase 3 entry point — render the deck.
+// In Phase 4 a tap on the top card will open the detail view.
 // ---------------------------------------------------------------------------
 
-import { CARS } from "./data/cars";
-import { CarCard } from "./components/CarCard";
+import { CARS, sortCars } from "./data/cars";
+import { CarDeck } from "./components/CarDeck";
+
+const SORTED_CARS = sortCars(CARS);
 
 export default function App() {
   return (
@@ -16,7 +18,7 @@ export default function App() {
           "radial-gradient(ellipse at top, #1a2030 0%, #050608 70%)",
       }}
     >
-      <CarCard car={CARS[0]} />
+      <CarDeck cars={SORTED_CARS} />
     </div>
   );
 }
