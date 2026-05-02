@@ -1,0 +1,119 @@
+// CarCard.jsx
+// ---------------------------------------------------------------------------
+// The atomic unit of the whole app. Top Trumps / Pokemon vibe:
+//   - Dark base with accent-coloured frame and outer glow
+//   - Type badge + country flag at the top
+//   - Big bold name, smaller variant subtitle
+//   - Hero photo over a soft accent-coloured radial halo
+//   - Hexagon (the hook)
+//   - Spec readout list (the truth)
+//
+// The card has a fixed width — when you build the deck in Phase 3 you'll
+// stack these in a relative-positioned container and let Framer Motion
+// animate transforms.
+// ---------------------------------------------------------------------------
+
+import { useState } from "react";
+import { STAT_CONFIG } from "../data/statConfig";
+import { StatHexagon } from "./StatHexagon";
+import { StatRow } from "./StatRow";
+
+export function CarCard({ car }) {
+  const [imageOk, setImageOk] = useState(true);
+
+  return (
+    <div className="relative w-[340px] rounded-[28px] overflow-hidden">
+      {/* Outer glow — same colour as the accent, soft and offset */}
+      <div
+        className="absolute -inset-2 rounded-[32px] blur-2xl opacity-40 -z-10"
+        style={{ background: car.accentColor }}
+      />
+
+      {/* Frame border (gradient ring around the card) */}
+      <div
+        className="absolute inset-0 rounded-[28px] pointer-events-none"
+        style={{
+          padding: 2,
+          background: `linear-gradient(140deg, ${car.accentColor} 0%, rgba(255,255,255,0.08) 40%, ${car.accentColor}aa 100%)`,
+          WebkitMask:
+            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+        }}
+      />
+
+      {/* Card body */}
+      <div
+        className="relative rounded-[28px] overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(160deg, #1a2030 0%, #0c0f18 60%, #07090f 100%)",
+          boxShadow:
+            "0 30px 60px -15px rgba(0,0,0,0.6), 0 10px 20px -5px rgba(0,0,0,0.4)",
+        }}
+      >
+        {/* Header: type badge + flag */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-1">
+          <span
+            className="text-[10px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded"
+            style={{ background: car.accentColor, color: "#0a0d14" }}
+          >
+            {car.type}
+          </span>
+          <span className="text-2xl leading-none" aria-label="origine">
+            {car.origin}
+          </span>
+        </div>
+
+        {/* Title block */}
+        <div className="px-5 pt-2">
+          <h2 className="text-[34px] font-black text-white leading-[1] tracking-tight">
+            {car.name}
+          </h2>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/45 mt-1.5">
+            {car.variant}
+          </p>
+        </div>
+
+        {/* Hero photo with radial halo */}
+        <div
+          className="relative h-40 mx-4 mt-3 mb-1 rounded-2xl overflow-hidden flex items-center justify-center"
+          style={{
+            background: `radial-gradient(ellipse at center, ${car.accentColor}33 0%, transparent 65%)`,
+          }}
+        >
+          {imageOk ? (
+            <img
+              src={car.image}
+              alt={car.name}
+              className="max-h-full max-w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
+              onError={() => setImageOk(false)}
+            />
+          ) : (
+            <div className="text-center text-white/35 text-[11px] px-6 leading-relaxed">
+              Drop a transparent PNG at
+              <br />
+              <code className="text-white/55">{car.image}</code>
+            </div>
+          )}
+        </div>
+
+        {/* Hexagon */}
+        <div className="px-2 pt-1 pb-2">
+          <StatHexagon stats={car.stats} accentColor={car.accentColor} />
+        </div>
+
+        {/* Stat readout */}
+        <div className="px-5 pb-5">
+          {STAT_CONFIG.map((stat) => (
+            <StatRow
+              key={stat.key}
+              stat={stat}
+              value={car.stats[stat.key]}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

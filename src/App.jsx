@@ -1,12 +1,22 @@
-const car = { name: "Renault 5", range: 312 }
+// App.jsx
+// ---------------------------------------------------------------------------
+// Phase 2 entry point — render one card, beautifully.
+// In Phase 3 this becomes a stack of cards with swipe gestures.
+// ---------------------------------------------------------------------------
+
+import { CARS } from "./data/cars";
+import { CarCard } from "./components/CarCard";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-zinc-900 text-white flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold">{car.name}</h1>
-        <p className="mt-4 text-2xl text-zinc-400">{car.range} km</p>
-      </div>
+    <div
+      className="min-h-screen flex items-center justify-center p-6"
+      style={{
+        background:
+          "radial-gradient(ellipse at top, #1a2030 0%, #050608 70%)",
+      }}
+    >
+      <CarCard car={CARS[0]} />
     </div>
-  )
+  );
 }
