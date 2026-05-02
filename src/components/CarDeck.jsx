@@ -41,12 +41,38 @@ function depthStyle(depth) {
   };
 }
 
+// Bottom-of-deck swipe affordance. Renders only until the user has
+// swiped once — the hint exists to bootstrap discovery and would just be
+// chrome after that.
+function SwipeHint() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, transition: { duration: 0.25 } }}
+      className="absolute -bottom-10 left-0 right-0 text-center pointer-events-none"
+    >
+      <motion.span
+        className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white/40"
+        animate={{ x: [-3, 3, -3] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <span aria-hidden="true">←</span>
+        swipe
+        <span aria-hidden="true">→</span>
+      </motion.span>
+    </motion.div>
+  );
+}
+
 export function CarDeck({ cars }) {
   // `index` points at the top card. We never mutate `cars`; we just rotate
   // through it modulo length.
   const [index, setIndex] = useState(0);
   // Direction of the most recent swipe — feeds the exit animation.
   const [exitDirection, setExitDirection] = useState(0);
+  // Has the user committed at least one swipe? Used to retire the hint.
+  const [hasSwiped, setHasSwiped] = useState(false);
 
   if (!cars.length) return null;
 
@@ -66,6 +92,7 @@ export function CarDeck({ cars }) {
     if (swipedFarEnough || swipedFastEnough) {
       setExitDirection(offset.x > 0 ? 1 : -1);
       setIndex((i) => (i + 1) % cars.length);
+      setHasSwiped(true);
     }
   }
 
@@ -74,6 +101,11 @@ export function CarDeck({ cars }) {
     // min-h matches roughly the card's height — keeps layout stable as the
     // top card exits.
     <div className="relative w-full max-w-[420px] mx-auto" style={{ minHeight: 720 }}>
+      {/* Swipe affordance — disappears for good after the first commit */}
+      <AnimatePresence>
+        {!hasSwiped && <SwipeHint key="swipe-hint" />}
+      </AnimatePresence>
+
       {/* Render bottom-up so the top card paints last (CSS stacking). */}
       {[...visible].reverse().map(({ car, depth, key }) => {
         const isTop = depth === 0;

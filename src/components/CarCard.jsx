@@ -14,9 +14,44 @@
 // ---------------------------------------------------------------------------
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { STAT_CONFIG } from "../data/statConfig";
 import { StatHexagon } from "./StatHexagon";
 import { StatRow } from "./StatRow";
+
+// Small labelled divider between the hexagon and the stat readout.
+// The bobbing chevron tells the user the rows below are scrollable / there's
+// more content under the hex (the radar is the hook, the readout is the truth).
+function SpecsDivider() {
+  return (
+    <div className="flex items-center gap-3 px-5 -mt-1 mb-2 text-white/40">
+      <div className="flex-1 h-px bg-white/10" />
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] font-black uppercase tracking-[0.25em]">
+          Specs
+        </span>
+        <motion.svg
+          width="10"
+          height="6"
+          viewBox="0 0 10 6"
+          fill="none"
+          aria-hidden="true"
+          animate={{ y: [0, 2, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path
+            d="M1 1l4 4 4-4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </motion.svg>
+      </div>
+      <div className="flex-1 h-px bg-white/10" />
+    </div>
+  );
+}
 
 export function CarCard({ car }) {
   const [imageOk, setImageOk] = useState(true);
@@ -110,6 +145,9 @@ export function CarCard({ car }) {
         <div className="px-2 pt-1 pb-2">
           <StatHexagon stats={car.stats} accentColor={car.accentColor} />
         </div>
+
+        {/* Divider — labels the readout below and signals "scroll for more" */}
+        <SpecsDivider />
 
         {/* Stat readout */}
         <div className="px-5 pb-5">
