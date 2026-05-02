@@ -30,7 +30,9 @@ public/
 
 **Card sizing.** `w-full max-w-[420px]` on the card + `px-3 py-6 sm:p-6` on the page wrapper. Fills the screen on phones, caps on tablet/desktop.
 
-**Image strategy.** Currently shipping with a stylised SVG silhouette as a placeholder. The `<img>` element has a CSS filter (`contrast(1.1) saturate(1.3)` + drop-shadow) so any raw photo dropped in later automatically gets normalised to a more game-like, visually cohesive style. Sourcing strategy when ready: ev-database.org for standardised side-profile shots; manufacturer press kits for hero cars.
+**Image strategy.** The `<img>` element has a CSS filter (`contrast(1.1) saturate(1.3)` + drop-shadow) so any raw photo gets normalised to a more game-like, visually cohesive style. Sourcing strategy: ev-database.org for standardised side-profile shots; manufacturer press kits for hero cars. Side profile is the deck convention — every future car must match the angle of the R5.
+
+**Internationalisation.** App is English-only, single locale. Currency is € across the deck (pan-European default). Numbers format with comma-grouped thousands (en-US locale) for international legibility. No i18n machinery — if multilingual support comes later it'll be a deliberate add, not a retrofit. The brand is **Kilovolt** at `kilovolt.app` — note that the domain is internationally pronounceable, which was part of the selection rationale.
 
 ## What's intentionally NOT in v1
 

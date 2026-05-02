@@ -29,7 +29,7 @@ export const CARS = [
     id: "renault-5-e-tech",
     name: "Renault 5",
     variant: "E-Tech Comfort Range 150", // <-- the trim the hex values describe
-    type: "Citadine",
+    type: "City car",
     origin: "🇫🇷",
     image: "/cars/renault-5.png",
     accentColor: "#FFD400", // Pop Yellow — the iconic launch colour

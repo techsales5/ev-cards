@@ -10,8 +10,9 @@
 //
 // `min` / `max`:
 //   Bounds used to normalise raw values into 0..1 for the radar. Calibrate
-//   these in Phase 6 once you have the full 10-15 car dataset. For now they
-//   are reasonable bounds across mainstream EVs sold in France in 2025-26.
+//   these in Phase 6 once the full 10-15 car dataset is in. Current bounds
+//   target a mainstream-EV deck — extend the upper end (range, charge,
+//   price) when you add the F-150 Lightning, Cybertruck, etc.
 //
 // `shortLabel`: used inside the cramped hexagon. `label` is used in the
 // stat readout list below the radar.
@@ -29,8 +30,8 @@
 export const STAT_CONFIG = [
   {
     key: "range",
-    label: "Autonomie",
-    shortLabel: "AUTO",
+    label: "Range",
+    shortLabel: "RANGE",
     unit: "km",
     direction: "high",
     min: 200,
@@ -38,7 +39,7 @@ export const STAT_CONFIG = [
   },
   {
     key: "charge",
-    label: "Charge DC",
+    label: "Fast charge",
     shortLabel: "CHARGE",
     unit: "kW",
     direction: "high",
@@ -47,8 +48,8 @@ export const STAT_CONFIG = [
   },
   {
     key: "price",
-    label: "Prix",
-    shortLabel: "PRIX",
+    label: "Price",
+    shortLabel: "PRICE",
     unit: "€",
     direction: "low",
     min: 25000,
@@ -57,7 +58,7 @@ export const STAT_CONFIG = [
   },
   {
     key: "accel",
-    label: "0-100",
+    label: "0–100",
     shortLabel: "0-100",
     unit: "s",
     direction: "low",
@@ -66,8 +67,8 @@ export const STAT_CONFIG = [
   },
   {
     key: "boot",
-    label: "Coffre",
-    shortLabel: "COFFRE",
+    label: "Boot",
+    shortLabel: "BOOT",
     unit: "L",
     direction: "high",
     min: 200,
@@ -75,8 +76,8 @@ export const STAT_CONFIG = [
   },
   {
     key: "efficiency",
-    label: "Consommation",
-    shortLabel: "CONSO",
+    label: "Efficiency",
+    shortLabel: "EFF",
     unit: "Wh/km",
     direction: "low",
     min: 100,
@@ -99,24 +100,30 @@ export function normaliseStat(stat, value) {
   return direction === "high" ? linear : 1 - linear;
 }
 
-// Format a single raw number for display, using French locale where applicable.
+// Format a single raw number for display.
+// Prices use comma-grouped thousands (en-US locale) — internationally legible.
 function formatNumber(stat, n) {
   if (stat.format === "price") {
-    return n.toLocaleString("fr-FR");
+    return n.toLocaleString("en-US");
   }
   // Numbers like 14.7 keep one decimal; integers don't.
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
-// Format the headline value for the readout — e.g. "410 km", "32 500 €".
+// Format the headline value for the readout — e.g. "410 km", "€32,500".
+// Currency goes as a prefix (€32,500), other units as a suffix (410 km).
 export function formatHex(stat, statValue) {
   const hex = getHexValue(statValue);
-  return `${formatNumber(stat, hex)} ${stat.unit}`;
+  const formatted = formatNumber(stat, hex);
+  if (stat.format === "price") {
+    return `${stat.unit}${formatted}`;
+  }
+  return `${formatted} ${stat.unit}`;
 }
 
 // Format the trim envelope for the readout — e.g. "(312–410)", "(80–100)".
-// Returns null when there is nothing meaningful to show; the row then
-// collapses to just the headline value with no parenthetical.
+// Unit/symbol is dropped from the parenthetical (the headline already shows
+// it). Returns null when there is nothing meaningful to display.
 export function formatRange(stat, statValue) {
   if (typeof statValue !== "object") return null;
   const { min, max } = statValue;
