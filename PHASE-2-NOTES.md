@@ -32,7 +32,9 @@ public/
 
 **Image strategy.** The `<img>` element has a CSS filter (`contrast(1.1) saturate(1.3)` + drop-shadow) so any raw photo gets normalised to a more game-like, visually cohesive style. Sourcing strategy: ev-database.org for standardised side-profile shots; manufacturer press kits for hero cars. Side profile is the deck convention — every future car must match the angle of the R5.
 
-**Internationalisation.** App is English-only, single locale. Currency is € across the deck (pan-European default). Numbers format with comma-grouped thousands (en-US locale) for international legibility. No i18n machinery — if multilingual support comes later it'll be a deliberate add, not a retrofit. The brand is **Kilovolt** at `kilovolt.app` — note that the domain is internationally pronounceable, which was part of the selection rationale.
+**Internationalisation.** App is English-only, single locale. Currency is € across the deck (pan-European default). Numbers format with comma-grouped thousands (en-US locale) for international legibility. No i18n machinery — if multilingual support comes later it'll be a deliberate add, not a retrofit.
+
+**Brand.** The product is **kilovolt** (lowercase wordmark, like airbnb / spotify / vercel) at `kilovolt.app`. Lowercase nods to the SI-unit origin (kV, kW, km — all lowercase by convention) and matches the tech-native cohort. Style rule: lowercase in the wordmark/UI; capitalise "Kilovolt" only when it starts a sentence in body copy.
 
 ## What's intentionally NOT in v1
 
