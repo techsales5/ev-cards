@@ -10,7 +10,7 @@ import { CarCard } from "./components/CarCard";
 export default function App() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-screen flex items-center justify-center px-3 py-6 sm:p-6"
       style={{
         background:
           "radial-gradient(ellipse at top, #1a2030 0%, #050608 70%)",

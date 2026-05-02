@@ -22,7 +22,7 @@ export function CarCard({ car }) {
   const [imageOk, setImageOk] = useState(true);
 
   return (
-    <div className="relative w-[340px] rounded-[28px] overflow-hidden">
+    <div className="relative w-full max-w-[420px] rounded-[28px] overflow-hidden">
       {/* Outer glow — same colour as the accent, soft and offset */}
       <div
         className="absolute -inset-2 rounded-[32px] blur-2xl opacity-40 -z-10"

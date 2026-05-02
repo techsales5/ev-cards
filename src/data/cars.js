@@ -31,7 +31,7 @@ export const CARS = [
     variant: "E-Tech Comfort Range 150", // <-- the trim the hex values describe
     type: "Citadine",
     origin: "🇫🇷",
-    image: "/cars/renault-5.png",
+    image: "/cars/renault-5.svg", // ships with a stylised silhouette; swap for a transparent PNG when you have one
     accentColor: "#FFD400", // Pop Yellow — the iconic launch colour
     stats: {
       // 52 kWh / 150 hp is hex; 40 kWh urbaine is the lower bound.
