@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/*
+ * Base page background.
+ * The App's radial gradient fades to #050608 at 70% — matching that here
+ * means any area outside the gradient (iOS rubber-band overscroll, page
+ * regions taller than the gradient on small viewports) stays dark instead
+ * of flashing white.
+ *
+ * color-scheme: dark tells the browser to render native UI (scrollbars,
+ * form controls, overscroll glow) in dark mode to match.
+ */
+html,
+body {
+  background: #050608;
+  color-scheme: dark;
+  /* Kill the blue tap highlight when the user taps the card on iOS. */
+  -webkit-tap-highlight-color: transparent;
+}
