@@ -1,4 +1,4 @@
-# Phase 4 — Detail view (design locked)
+# Phase 4 — Detail view (v0 shipped)
 
 The atomic card from Phase 2 and the deck from Phase 3, plus the long-awaited "tap for receipts" payoff. The hexagon stops being the only truth and becomes the hook into a full editorial + data view per car.
 
@@ -61,14 +61,12 @@ src/
 
 **Brand survives the repositioning.** Kilovolt is a unit name, language-neutral, lowercase wordmark at kilovolt.app. No change.
 
-## Still open at the time of writing
+## Resolved during implementation
 
-- *NCAP layout.* Push: just star rating + year tested as a single muted line, no sub-score breakdown. Credibility marker, not deep-dive.
-- *Extras grid contents.* Candidate fields: drive type (RWD/AWD), weight (kg), length × width (mm), warranty (years/km), year of release. Two-column compact label-value grid.
-- *Verdict tone.* Direction is informed-enthusiast and dry-witty. Reference voice not finalised — The Verge's car coverage or InsideEVs are the strongest candidates.
-- *Top-of-detail close affordance.* X exists but exact placement / size / contrast TBD.
-
-These don't block the structural work. NCAP and Extras can be drafted as placeholder components and refined when the data lands.
+- *NCAP layout.* Shipped as a single muted line: star rating (filled yellow ★ + empty white ☆) + year tested as a small tabular-num tail. No sub-score breakdown. `NcapRow` component.
+- *Extras grid contents.* Six fields in a two-column compact grid: drive, weight (kg), length (m), width (m), warranty (yr / k km), release year. `ExtrasGrid` component.
+- *Verdict tone.* Voice A (editorial-character, The Verge's car-coverage register). Six headlines written; bodies optional and currently empty — they collapse gracefully when absent.
+- *Top-of-detail close affordance.* X button fixed top-right (`top-4 right-4 z-50`), 40 px square rounded-full, `bg-white/10` with backdrop-blur, `text-white/80`. Sits above the detail's content layer.
 
 ## What's intentionally NOT in v0
 
