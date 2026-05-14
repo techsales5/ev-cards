@@ -35,11 +35,17 @@ function toPolyString(points) {
   return points.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(" ");
 }
 
-export function StatHexagon({ stats, accentColor = "#FFD400" }) {
+export function StatHexagon({ car }) {
+  const accentColor = car.accentColor ?? "#FFD400";
   const carPoints = STAT_CONFIG.map((stat, i) => {
-    // The radar plots the headline (`hex`) value. Trim envelopes don't
-    // affect the shape — they're shown numerically in the readout below.
-    const v = normaliseStat(stat, getHexValue(stats[stat.key]));
+    // Range axis plots real-world highway range, not WLTP — WLTP surfaces
+    // only in the detail view's Range Gap section. Other axes still pull
+    // the headline `hex` value from stats[stat.key].
+    const value =
+      stat.key === "range"
+        ? car.realHighwayRange
+        : getHexValue(car.stats[stat.key]);
+    const v = normaliseStat(stat, value);
     return pointOnCircle(RADIUS * v, i);
   });
 

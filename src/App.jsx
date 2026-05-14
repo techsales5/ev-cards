@@ -1,15 +1,27 @@
 // App.jsx
 // ---------------------------------------------------------------------------
-// Phase 3 entry point — render the deck.
-// In Phase 4 a tap on the top card will open the detail view.
+// Phase 4 entry point.
+//
+// State model: one piece of state — `selectedCarId`. When non-null, the
+// AnimatePresence-wrapped CarDetail mounts on top of the deck; when null, it
+// unmounts. The deck is always rendered behind, so layoutId-tracked elements
+// (photo, hexagon) can shared-element-morph between card and detail.
 // ---------------------------------------------------------------------------
 
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { CARS, sortCars } from "./data/cars";
 import { CarDeck } from "./components/CarDeck";
+import { CarDetail } from "./components/CarDetail";
 
 const SORTED_CARS = sortCars(CARS);
 
 export default function App() {
+  const [selectedCarId, setSelectedCarId] = useState(null);
+  const selectedCar = selectedCarId
+    ? SORTED_CARS.find((c) => c.id === selectedCarId) ?? null
+    : null;
+
   return (
     <div
       // `min-h-dvh` tracks the *visible* viewport on mobile Safari (shrinks
@@ -22,7 +34,17 @@ export default function App() {
           "radial-gradient(ellipse at top, #1a2030 0%, #050608 70%)",
       }}
     >
-      <CarDeck cars={SORTED_CARS} />
+      <CarDeck cars={SORTED_CARS} onSelect={setSelectedCarId} />
+
+      <AnimatePresence>
+        {selectedCar && (
+          <CarDetail
+            key={selectedCar.id}
+            car={selectedCar}
+            onClose={() => setSelectedCarId(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

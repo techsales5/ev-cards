@@ -34,8 +34,12 @@ export const STAT_CONFIG = [
     shortLabel: "RANGE",
     unit: "km",
     direction: "high",
-    min: 200,
-    max: 650,
+    // Real-world highway bounds (~110 km/h cruise). The hexagon plots
+    // each car's realHighwayRange field — NOT stats.range.hex, which is
+    // WLTP and surfaces only in the detail view's Range Gap section.
+    // Headroom kept up to 600 km for halo cars (Lucid Air, EQS) in Phase 6.
+    min: 150,
+    max: 600,
   },
   {
     key: "charge",

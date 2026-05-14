@@ -1,59 +1,70 @@
 // CarCard.jsx
 // ---------------------------------------------------------------------------
-// The atomic unit of the whole app. Top Trumps / Pokemon vibe:
-//   - Dark base with accent-coloured frame and outer glow
-//   - Type badge + country flag at the top
-//   - Big bold name, smaller variant subtitle
-//   - Hero photo over a soft accent-coloured radial halo
-//   - Hexagon (the hook)
-//   - Spec readout list (the truth)
+// Phase 4 — slimmed character-select tile.
 //
-// The card has a fixed width — when you build the deck in Phase 3 you'll
-// stack these in a relative-positioned container and let Framer Motion
-// animate transforms.
+// The card carries: type badge + origin flag, name + variant, hero photo over
+// the accent halo, hexagon, and a chunky "See details" button beneath the
+// hex. The button is the dedicated tap target for opening the detail view;
+// the surrounding card surface is the draggable area (drag handlers live in
+// CarDeck). Separating these gestures avoids the Framer-Motion gotcha where
+// `onTap` and `onDragEnd` on the same element both fire on a successful
+// swipe.
+//
+// The full stat readout that used to live on this card has moved to the
+// detail view in Phase 4. See PHASE-4-NOTES.md.
+//
+// layoutIds on the photo container and the hexagon wrapper drive the
+// shared-element morph between the card and the detail view.
 // ---------------------------------------------------------------------------
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { STAT_CONFIG } from "../data/statConfig";
 import { StatHexagon } from "./StatHexagon";
-import { StatRow } from "./StatRow";
 
-// Small labelled divider between the hexagon and the stat readout.
-// The bobbing chevron tells the user the rows below are scrollable / there's
-// more content under the hex (the radar is the hook, the readout is the truth).
-function SpecsDivider() {
+// Chunky, accent-coloured pill button beneath the hexagon. Native gesture
+// disambiguation handles tap-vs-drag: pressing the button starts a potential
+// click, but if pointer movement exceeds the drag threshold the parent's
+// drag engages and the click is cancelled by the browser/Framer.
+function TapCue({ accentColor, onSelect }) {
   return (
-    <div className="flex items-center gap-3 px-5 -mt-1 mb-2 text-white/40">
-      <div className="flex-1 h-px bg-white/10" />
-      <div className="flex items-center gap-1.5">
-        <span className="text-[10px] font-black uppercase tracking-[0.25em]">
-          Specs
-        </span>
+    <div className="flex justify-center pb-5 pt-1">
+      <motion.button
+        type="button"
+        onTap={() => onSelect?.()}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-2.5 px-6 py-3 rounded-full text-[12px] font-black uppercase tracking-[0.2em]"
+        style={{
+          background: accentColor,
+          color: "#0a0d14",
+          // Coloured glow under the button — gives it lift in the game-y
+          // visual register without falling back to a generic grey shadow.
+          boxShadow: `0 6px 24px -8px ${accentColor}80`,
+        }}
+      >
+        See details
         <motion.svg
           width="10"
-          height="6"
-          viewBox="0 0 10 6"
+          height="12"
+          viewBox="0 0 8 14"
           fill="none"
           aria-hidden="true"
-          animate={{ y: [0, 2, 0] }}
+          animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
         >
           <path
-            d="M1 1l4 4 4-4"
+            d="M1 1l5 6-5 6"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </motion.svg>
-      </div>
-      <div className="flex-1 h-px bg-white/10" />
+      </motion.button>
     </div>
   );
 }
 
-export function CarCard({ car }) {
+export function CarCard({ car, onSelect }) {
   const [imageOk, setImageOk] = useState(true);
 
   return (
@@ -95,7 +106,7 @@ export function CarCard({ car }) {
           >
             {car.type}
           </span>
-          <span className="text-2xl leading-none" aria-label="origine">
+          <span className="text-2xl leading-none" aria-label="origin">
             {car.origin}
           </span>
         </div>
@@ -110,8 +121,11 @@ export function CarCard({ car }) {
           </p>
         </div>
 
-        {/* Hero photo with radial halo */}
-        <div
+        {/* Hero photo with radial halo — wrapped in motion.div for the
+            shared-element morph into the detail view. layoutId is keyed by
+            car.id so it matches the detail view's photo element. */}
+        <motion.div
+          layoutId={`photo-${car.id}`}
           className="relative h-40 mx-4 mt-3 mb-1 rounded-2xl overflow-hidden flex items-center justify-center"
           style={{
             background: `radial-gradient(ellipse at center, ${car.accentColor}33 0%, transparent 65%)`,
@@ -139,26 +153,18 @@ export function CarCard({ car }) {
               <code className="text-white/55">{car.image}</code>
             </div>
           )}
-        </div>
+        </motion.div>
 
-        {/* Hexagon */}
-        <div className="px-2 pt-1 pb-2">
-          <StatHexagon stats={car.stats} accentColor={car.accentColor} />
-        </div>
+        {/* Hexagon — wrapped in motion.div for shared-element morph. */}
+        <motion.div layoutId={`hex-${car.id}`} className="px-2 pt-1 pb-2">
+          <StatHexagon car={car} />
+        </motion.div>
 
-        {/* Divider — labels the readout below and signals "scroll for more" */}
-        <SpecsDivider />
-
-        {/* Stat readout */}
-        <div className="px-5 pb-5">
-          {STAT_CONFIG.map((stat) => (
-            <StatRow
-              key={stat.key}
-              stat={stat}
-              value={car.stats[stat.key]}
-            />
-          ))}
-        </div>
+        {/* Dedicated tap-to-open button. */}
+        <TapCue
+          accentColor={car.accentColor}
+          onSelect={() => onSelect?.(car.id)}
+        />
       </div>
     </div>
   );

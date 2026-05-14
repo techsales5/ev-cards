@@ -68,7 +68,7 @@ function SwipeHint() {
   );
 }
 
-export function CarDeck({ cars }) {
+export function CarDeck({ cars, onSelect }) {
   // `index` points at the top card. We never mutate `cars`; we just rotate
   // through it modulo length.
   const [index, setIndex] = useState(0);
@@ -103,7 +103,7 @@ export function CarDeck({ cars }) {
     // Sized like the card itself (max-w-[420px]) so the stack stays centred.
     // min-h matches roughly the card's height — keeps layout stable as the
     // top card exits.
-    <div className="relative w-full max-w-[420px] mx-auto" style={{ minHeight: 720 }}>
+    <div className="relative w-full max-w-[420px] mx-auto" style={{ minHeight: 600 }}>
       {/* Swipe affordance — disappears for good after the first commit */}
       <AnimatePresence>
         {!hasSwiped && <SwipeHint key="swipe-hint" />}
@@ -125,7 +125,7 @@ export function CarDeck({ cars }) {
               transition={{ type: "spring", stiffness: 260, damping: 30 }}
               style={{ pointerEvents: "none" }}
             >
-              <CarCard car={car} />
+              <CarCard car={car} onSelect={onSelect} />
             </motion.div>
           );
         }
@@ -140,7 +140,9 @@ export function CarDeck({ cars }) {
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.8}
               onDragEnd={handleDragEnd}
-              // Subtle rotation while dragging — feels like a real card.
+              // Tap-to-open lives on a dedicated button inside CarCard, NOT
+              // here — putting onTap on the same motion.div as drag causes
+              // both onTap and onDragEnd to fire on a successful swipe.
               style={{ touchAction: "pan-y" }}
               whileTap={{ cursor: "grabbing" }}
               // Match depth=1 styling on enter so the next card looks like it
@@ -157,7 +159,7 @@ export function CarDeck({ cars }) {
               custom={exitDirection}
               transition={{ type: "spring", stiffness: 260, damping: 30 }}
             >
-              <CarCard car={car} />
+              <CarCard car={car} onSelect={onSelect} />
             </motion.div>
           </AnimatePresence>
         );

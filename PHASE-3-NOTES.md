@@ -46,6 +46,8 @@ src/
 | Real photos for the 5 new cars | 6 |
 | Calibrated min/max bounds in `statConfig.js` | 6 |
 | Onboarding swipe hint / first-run cue | 6 |
+| Resolve PRICE axis ambiguity (rename → AFFORDABILITY, or full value score) | later |
+| Tighten EFFICIENCY axis sensitivity (real-world spread is ~135–170 Wh/km; current 100–250 bounds flatten meaningful differences) | later |
 
 ## Adding photos for the new cars
 

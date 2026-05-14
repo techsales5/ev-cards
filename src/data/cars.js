@@ -25,9 +25,27 @@
 //     a single number doesn't tell the whole story.
 //   - Omit min/max for stats that don't vary across trims (e.g. boot).
 //
-// Stat figures use widely-published WLTP / manufacturer numbers as of
-// early 2026. They're approximate enough for v1 — calibrating to a single
-// authoritative source (ev-database.org) is a Phase 6 chore.
+// Phase 4 additions:
+//   verdict           — { headline, body }: editorial calling card per car.
+//                       Headline is the one-liner above the fold in the
+//                       detail view. Body is an optional paragraph below
+//                       the fold; collapses gracefully when empty.
+//   realHighwayRange  — km of real-world motorway range at ~110 km/h. NOT
+//                       WLTP. The hexagon plots this; stats.range below stays
+//                       as WLTP, used only in the detail view's Range Gap
+//                       section as a counterpoint.
+//   chargeTime10to80  — minutes for a 10–80% DC fast-charge in a real session.
+//   chargeCurve       — array of { soc, kw } points, 7–10 samples across the
+//                       curve. Powers the ChargeCurve chart in the detail view.
+//   ncap              — { stars: 1–5, year: yyyy } from euroncap.com.
+//   extras            — drive, weight, dimensions, warranty, release year.
+//                       Surfaced in the detail view's Extras grid.
+//
+// Stat figures use widely-published WLTP/manufacturer numbers for `stats.*`.
+// Real-world figures (realHighwayRange, chargeTime10to80, chargeCurve) are
+// sourced from InsideEVs, Bjørn Nyland, Fastned Open Data, and EVKX — see
+// per-car sourcing comments. Calibrating to a single authoritative source is
+// a Phase 6 chore.
 // ---------------------------------------------------------------------------
 
 export const CARS = [
@@ -49,6 +67,27 @@ export const CARS = [
       boot:       { hex: 326                            }, // L — same across trims
       efficiency: { hex: 147                            }, // Wh/km
     },
+    verdict: {
+      headline: "France's first lovable EV in twenty years, wearing a 1972 jacket.",
+      body: "",
+    },
+    realHighwayRange: 265,  // km — InsideEVs UK + ArenaEV, midpoint of 240–290 spread
+    chargeTime10to80: 32,   // min — EVKX/Fastned-derived, 100 kW peak DC
+    chargeCurve: [
+      { soc: 10, kw: 100 }, { soc: 20, kw: 95 }, { soc: 30, kw: 90 },
+      { soc: 50, kw: 75 },  { soc: 60, kw: 65 }, { soc: 70, kw: 50 },
+      { soc: 80, kw: 40 },
+    ],
+    ncap: { stars: 4, year: 2024 },  // chest protection rated marginal
+    extras: {
+      drive: "FWD",
+      weightKg: 1535,
+      lengthMm: 3922,
+      widthMm: 1774,
+      warrantyYears: 5,
+      warrantyKm: 100000,
+      year: 2024,
+    },
   },
   {
     id: "tesla-model-y",
@@ -68,6 +107,27 @@ export const CARS = [
       accel:      { hex: 5.9,   min: 3.7,   max: 6.9   },
       boot:       { hex: 854                            }, // incl. frunk + underfloor
       efficiency: { hex: 155                            },
+    },
+    verdict: {
+      headline: "The EV that became infrastructure, and asks awkward questions at dinner.",
+      body: "",
+    },
+    realHighwayRange: 500,  // km — derived from Juniper LR AWD 70mph (480 km) + RWD efficiency bonus; awaiting direct LR RWD test
+    chargeTime10to80: 27,   // min — V3 Supercharger, owner-reported
+    chargeCurve: [
+      { soc: 10, kw: 240 }, { soc: 20, kw: 210 }, { soc: 30, kw: 170 },
+      { soc: 40, kw: 140 }, { soc: 50, kw: 115 }, { soc: 60, kw: 90 },
+      { soc: 70, kw: 75 },  { soc: 80, kw: 60 },
+    ],
+    ncap: { stars: 5, year: 2022 },  // pre-Juniper test; structure unchanged, Tesla cites 5★
+    extras: {
+      drive: "RWD",
+      weightKg: 1921,
+      lengthMm: 4797,
+      widthMm: 1982,
+      warrantyYears: 4,
+      warrantyKm: 80000,    // basic vehicle; battery: 8yr / 192,000 km
+      year: 2025,           // Juniper refresh, global early 2025
     },
   },
   {
@@ -89,6 +149,27 @@ export const CARS = [
       boot:       { hex: 318                            },
       efficiency: { hex: 163                            },
     },
+    verdict: {
+      headline: "Half a Volvo at half the price, and you can hear it.",
+      body: "",
+    },
+    realHighwayRange: 395,  // km — Bjørn Nyland @ 90 km/h (414) + Recharged @ 70mph (398), triangulated
+    chargeTime10to80: 28,   // min — ~150 kW DC peak
+    chargeCurve: [
+      { soc: 10, kw: 150 }, { soc: 20, kw: 145 }, { soc: 30, kw: 130 },
+      { soc: 40, kw: 120 }, { soc: 50, kw: 100 }, { soc: 60, kw: 85 },
+      { soc: 70, kw: 67 },  { soc: 80, kw: 45 },
+    ],
+    ncap: { stars: 5, year: 2024 },
+    extras: {
+      drive: "RWD",
+      weightKg: 1830,
+      lengthMm: 4233,
+      widthMm: 1837,
+      warrantyYears: 3,
+      warrantyKm: 100000,
+      year: 2024,
+    },
   },
   {
     id: "tesla-model-3",
@@ -109,6 +190,27 @@ export const CARS = [
       boot:       { hex: 594                            }, // incl. frunk
       efficiency: { hex: 138                            },
     },
+    verdict: {
+      headline: "The first EV your dad heard of, somehow still the smartest sedan in the room.",
+      body: "",
+    },
+    realHighwayRange: 533,  // km — InsideEVs/Out of Spec 70mph (331 mi), Highland LR RWD, 85% of EPA
+    chargeTime10to80: 27,   // min — V3 Supercharger session
+    chargeCurve: [
+      { soc: 10, kw: 230 }, { soc: 20, kw: 210 }, { soc: 30, kw: 170 },
+      { soc: 40, kw: 140 }, { soc: 50, kw: 110 }, { soc: 60, kw: 90 },
+      { soc: 70, kw: 75 },  { soc: 80, kw: 60 },
+    ],
+    ncap: { stars: 5, year: 2024 },  // Highland re-tested under 2024 protocol
+    extras: {
+      drive: "RWD",
+      weightKg: 1823,
+      lengthMm: 4720,
+      widthMm: 1849,
+      warrantyYears: 4,
+      warrantyKm: 80000,    // basic vehicle; battery: 8yr / 192,000 km
+      year: 2023,           // Highland refresh, late 2023
+    },
   },
   {
     id: "vw-id3",
@@ -127,6 +229,27 @@ export const CARS = [
       accel:      { hex: 7.4,   min: 7.4,   max: 9.6   },
       boot:       { hex: 385                            },
       efficiency: { hex: 152                            },
+    },
+    verdict: {
+      headline: "The 'people's car' that finally remembered how to be one.",
+      body: "",
+    },
+    realHighwayRange: 380,  // km — Bjørn Nyland 120 km/h test (325 km) interpolated to 110 km/h
+    chargeTime10to80: 30,   // min — facelifted Pro S, 170+ kW peak DC
+    chargeCurve: [
+      { soc: 10, kw: 170 }, { soc: 20, kw: 165 }, { soc: 30, kw: 150 },
+      { soc: 40, kw: 130 }, { soc: 50, kw: 110 }, { soc: 60, kw: 90 },
+      { soc: 70, kw: 75 },  { soc: 80, kw: 55 },
+    ],
+    ncap: { stars: 5, year: 2020 },  // original 2020 test; re-affirmed under 2025 protocol
+    extras: {
+      drive: "RWD",
+      weightKg: 1882,
+      lengthMm: 4264,
+      widthMm: 1809,
+      warrantyYears: 3,
+      warrantyKm: 100000,   // battery: 8yr / 160,000 km separately
+      year: 2023,           // facelift launched 2023, Pro S MY24 update mid-2023/2024
     },
   },
   {
@@ -147,6 +270,27 @@ export const CARS = [
       accel:      { hex: 6.7,   min: 5.5,   max: 9.0   },
       boot:       { hex: 585                            },
       efficiency: { hex: 159                            },
+    },
+    verdict: {
+      headline: "Same parts as the Volkswagen, sharper everywhere it matters.",
+      body: "",
+    },
+    realHighwayRange: 380,  // km — EVKX 110 km/h model; awaiting direct InsideEVs/Nyland test of post-APP550 spec
+    chargeTime10to80: 28,   // min — Škoda official; consistent with 135 kW peak curve
+    chargeCurve: [
+      { soc: 10, kw: 135 }, { soc: 20, kw: 135 }, { soc: 30, kw: 135 },
+      { soc: 40, kw: 130 }, { soc: 50, kw: 110 }, { soc: 60, kw: 85 },
+      { soc: 70, kw: 65 },  { soc: 80, kw: 50 },
+    ],
+    ncap: { stars: 5, year: 2021 },  // original test; re-affirmed 2025
+    extras: {
+      drive: "RWD",
+      weightKg: 2141,
+      lengthMm: 4658,
+      widthMm: 1879,
+      warrantyYears: 3,
+      warrantyKm: 100000,
+      year: 2024,           // 2024 powertrain refresh (APP550, faster charging)
     },
   },
 ];
