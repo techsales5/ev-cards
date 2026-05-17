@@ -4,8 +4,9 @@
 //
 // Layout B (hex-anchored editorial):
 //   Above the fold: photo → name + badge → verdict one-liner → hexagon
-//   Below the fold:  verdict paragraph → real-world performance
-//                    (range gap + charge curve) → stat readout → safety → extras
+//   Below the fold:  verdict paragraph → range (real vs WLTP gap) →
+//                    charging (curve over 10–80%) → stat readout →
+//                    safety → extras
 //
 // Photo and hexagon carry layoutIds matching the card, so opening and closing
 // the detail view shared-element-morphs them between the two screens. Other
@@ -367,12 +368,21 @@ export function CarDetail({ car, onClose }) {
           </p>
         )}
 
-        {/* Real-world performance — the thesis made visible */}
+        {/* Range — real-world highway vs. the WLTP marketing claim. */}
         <section className="mb-10">
           <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45 mb-4">
-            Real-world performance
+            Range
           </h3>
           <RangeGap car={car} />
+        </section>
+
+        {/* Charging — actual kW vs. state-of-charge over the useful 10–80%
+            window. Peak charging is marketing; sustained kW deep into the
+            curve is what determines real-world session time. */}
+        <section className="mb-10">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45 mb-4">
+            Charging
+          </h3>
           <ChargeCurve car={car} />
         </section>
 

@@ -42,7 +42,7 @@ src/
 
 **Detail view: full-screen takeover, not modal or bottom-sheet.** The detail is a destination, not a sidebar. Bottom-sheet fights with content density; modal feels too app-y for the game framing. Full-screen lets photo and hexagon breathe, and unlocks the strongest card-to-detail animation.
 
-**Layout: hex-anchored editorial.** Above the fold: photo (~200px hero band) → name + badge + flag → verdict one-liner (prominent) → hexagon (~220px). Below the fold in order: verdict paragraph → Real-world performance block (charge curve + range gap) → full stat readout (the per-axis rows from the old card) → NCAP → Extras. The editorial calling card lands on arrival; data follows the claim.
+**Layout: hex-anchored editorial.** Above the fold: photo (~200px hero band) → name + badge + flag → verdict one-liner (prominent) → hexagon (~220px). Below the fold in order: verdict paragraph → Range (real vs WLTP gap) → Charging (curve over 10–80%) → full stat readout (the per-axis rows from the old card) → NCAP → Extras. The editorial calling card lands on arrival; data follows the claim.
 
 **Animation: full shared-element morph.** Photo container (outer div with halo, not the `<img>`) and hexagon wrapper both carry `layoutId`. Spring physics: stiffness 260, damping 24 (slightly bouncier than the deck's swipe at damping 30). ~400ms morph. Detail background fades in over ~250ms starting at ~50ms after morph begins, so the morphing elements lead the eye. Card's name/badge/chevron fade to opacity 0 over ~200ms. Reverse on dismiss.
 
@@ -50,10 +50,10 @@ src/
 
 **Dismissal: X button + drag-down.** X top-right of the detail view, white at ~60% opacity. `drag="y"` on the detail container, dismiss past ~80px offset or velocity threshold. Both trigger the same reverse-morph animation. Build both — X is the safety net, drag is the delight.
 
-**Real-world performance block.** Two sub-blocks under one section header.
+**Range and Charging as separate sections.** First pass shipped them under one "Real-world performance" wrapper. Field-tested with a non-EV-expert reader: the merged-and-unlabelled blocks read as ambiguous (which numbers are about range? which are about charging?). Split into two top-level sections sitting alongside Specifications / Safety / Extras, each labelled plainly. The editorial "real vs marketing" framing is carried by the content (gap percentage, curve shape), not by a section name.
 
-- *Range gap.* Side-by-side numerals: "Highway 320 km / WLTP 410 km / 22% gap." Gap percentage visually emphasised (larger weight or accent colour). No chart for one car; charting belongs to a cross-deck honesty view later, not v0.
-- *Charge curve.* Compact ~120–140px chart, kW vs. battery SoC, 10–80% band shaded in accent colour. Takeaway sentence below ("10–80% in 28 min"). Peak kW noted alongside as contrast ("Peak 250 kW / Sustained ~140 kW on a real session"). This block is the thesis made visible — invest in it.
+- *Range section.* Side-by-side numerals: "Highway 320 km / WLTP 410 km / 22% gap." Gap percentage visually emphasised in the car's accent colour. No chart for a single car; cross-deck honesty leaderboard belongs to v1+.
+- *Charging section.* Compact ~130px chart, kW vs. battery SoC, X axis cropped to the 10–80% useful charging range so the curve fills the chart area. Below the chart: takeaway sentence ("32 min for 10–80%") and peak kW as a contrast number. The chart shape is the thesis — peak charging is marketing, sustained kW deep into the curve is what determines real session time.
 
 **Hexagon plots real-world range, not WLTP.** Current `STAT_CONFIG.range` bounds (min 200, max 650) are WLTP-era. The brief says real-world wherever there's a choice. Migrate `range.hex` in `cars.js` to real-world highway, recalibrate `STAT_CONFIG.range.min/max` to roughly 150/500. The card's hexagon shape changes for every car as a side effect. WLTP only appears in the Range Gap section as a counterpoint, never on the hexagon.
 
