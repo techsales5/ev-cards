@@ -52,9 +52,14 @@ export const STAT_CONFIG = [
   },
   {
     key: "price",
-    label: "Price",
-    shortLabel: "PRICE",
+    label: "Affordability",
+    shortLabel: "AFFORD",
     unit: "€",
+    // `direction: "low"` inverts the raw price at normalisation time so the
+    // hexagon convention "bigger shape = better" holds. Labelled
+    // "Affordability" rather than "Price" so the axis name matches that
+    // convention — the axis grows as the car gets cheaper. The raw € figure
+    // in the spec readout disambiguates what's being measured.
     direction: "low",
     min: 25000,
     max: 100000,
