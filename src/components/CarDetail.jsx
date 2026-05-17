@@ -102,15 +102,23 @@ function ChargeCurve({ car }) {
 
   const width = 320;
   const height = 130;
-  const pad = { left: 26, right: 10, top: 10, bottom: 22 };
+  const pad = { left: 26, right: 14, top: 10, bottom: 22 };
   const innerW = width - pad.left - pad.right;
   const innerH = height - pad.top - pad.bottom;
+
+  // Chart's X axis is cropped to the 10–80% "useful charging range" — the
+  // span where the real data actually lives and the only span that matters
+  // on a road trip. Below 10% you rarely visit; above 80% you charge too
+  // slowly to bother. The takeaway line under the chart names the range.
+  const SOC_MIN = 10;
+  const SOC_MAX = 80;
 
   const peakKw = Math.max(...points.map((p) => p.kw));
   // Round up to next 50 for a clean y-axis.
   const yMax = Math.ceil(peakKw / 50) * 50;
 
-  const xOf = (soc) => pad.left + (soc / 100) * innerW;
+  const xOf = (soc) =>
+    pad.left + ((soc - SOC_MIN) / (SOC_MAX - SOC_MIN)) * innerW;
   const yOf = (kw) => pad.top + innerH - (kw / yMax) * innerH;
 
   const linePath = points
@@ -131,15 +139,6 @@ function ChargeCurve({ car }) {
         className="w-full h-auto select-none"
         aria-label="Charge curve from 10 to 80 percent state of charge"
       >
-        {/* 10–80% band — the part of the curve you actually use on a road trip */}
-        <rect
-          x={xOf(10)}
-          y={pad.top}
-          width={xOf(80) - xOf(10)}
-          height={innerH}
-          fill={car.accentColor}
-          fillOpacity={0.08}
-        />
         {/* Horizontal grid lines at 0 / 50% / 100% of yMax */}
         {[0, 0.5, 1].map((p) => (
           <line
@@ -181,7 +180,7 @@ function ChargeCurve({ car }) {
           fontSize="9"
           fill="rgba(255,255,255,0.45)"
         >
-          0%
+          10%
         </text>
         <text
           x={xOf(50) - 8}
@@ -192,12 +191,12 @@ function ChargeCurve({ car }) {
           50%
         </text>
         <text
-          x={xOf(100) - 16}
+          x={xOf(80) - 14}
           y={height - 6}
           fontSize="9"
           fill="rgba(255,255,255,0.45)"
         >
-          100%
+          80%
         </text>
       </svg>
       <div className="flex items-baseline justify-between mt-2 text-[12px]">
