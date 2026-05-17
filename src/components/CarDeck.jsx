@@ -103,7 +103,7 @@ export function CarDeck({ cars, onSelect }) {
     // Sized like the card itself (max-w-[420px]) so the stack stays centred.
     // min-h matches roughly the card's height — keeps layout stable as the
     // top card exits.
-    <div className="relative w-full max-w-[420px] mx-auto" style={{ minHeight: 600 }}>
+    <div className="relative w-full max-w-[420px] mx-auto" style={{ minHeight: 760 }}>
       {/* Swipe affordance — disappears for good after the first commit */}
       <AnimatePresence>
         {!hasSwiped && <SwipeHint key="swipe-hint" />}
